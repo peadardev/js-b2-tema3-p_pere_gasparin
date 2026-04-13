@@ -74,3 +74,48 @@ const PROJECT_LIST = [
 ];
 
 //Escribe aquí tu solución / escriviu aquí la vostra solució:
+function renderProjects() {
+    const templateProjecte = document.querySelector("#tpl-template").content;
+    const templateTag = document.querySelector("#tpl-tag").content;
+    const contenidorProjectes = document.querySelector(".js-project-list");
+    const fragment = document.createDocumentFragment()
+
+    for (const proj of PROJECT_LIST) {
+        const clon = templateProjecte.cloneNode(true);
+        const classeProjecte = clon.querySelector(".js-project");
+
+        classeProjecte.dataset.id = proj.id;
+        classeProjecte.dataset.tags = proj.tags.join(",");
+        classeProjecte.dataset.search = proj.search.join(",");
+        classeProjecte.dataset.archived = proj.archived;
+        
+        classeProjecte.querySelector(".js-name").textContent = proj.name;
+        classeProjecte.querySelector(".js-progress").textContent = proj.progress;
+        classeProjecte.querySelector(".js-excerpt").innerHTML = proj.excerpt;
+        const nomCategoria = CATEGORY_LIST.find(item => item.id === proj.categoryId).name;
+        classeProjecte.querySelector(".js-category").textContent = nomCategoria;
+
+        if (proj.archived) {
+            classeProjecte.classList.add("archived");
+        } 
+        if (proj.progress === 100) {
+            classeProjecte.classList.add("completed");
+        }
+
+        const contenidorTags = classeProjecte.querySelector(".js-tags");
+        contenidorTags.textContent = "";
+        for (tag of proj.tags) {
+            const clonTag = templateTag.cloneNode(true);
+            const classeTag = clonTag.querySelector(".js-tag");
+            const classeTagLink = classeTag.querySelector(".js-tag-link");
+            classeTagLink.dataset.tag = tag;
+            classeTagLink.href = tag;
+            classeTagLink.textContent = tag;
+            contenidorTags.appendChild(classeTag);
+        }
+        fragment.appendChild(classeProjecte);
+    }
+    contenidorProjectes.appendChild(fragment);
+}
+
+renderProjects();
